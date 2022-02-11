@@ -70,7 +70,7 @@ function createImage(idx) {
     const eye = randInt(4);
     const nose = randInt(1);
     const ear = randInt(1);
-    const horn = randInt(1);
+    const horn = randInt(2);
     const hair = randInt(2);
 
     const face = [base, eye, nose, ear, horn, hair].join('');
@@ -87,7 +87,7 @@ function createImage(idx) {
             .replace('<!-- eye -->', getPngLayer(`eye_${eye}`))
             .replace('<!-- nose -->', getPngLayer(`nose_0`))
             .replace('<!-- ear -->', getPngLayer(`ear_0`))
-            .replace('<!-- horn -->', getPngLayer(`horn_0`))
+            .replace('<!-- horn -->', getPngLayer(`horn_${horn}`))
             .replace('<!-- hair -->', getPngLayer(`hair_${hair}`))
             // .replace('<!-- nose -->', getLayer(`nose${nose}`))
             // .replace('<!-- mouth -->', getLayer(`mouth${mouth}`))
