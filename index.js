@@ -3,13 +3,10 @@ const sharp = require('sharp');
 
 const template = `
     <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- bg -->
-        <!-- head -->
+        <!-- base -->
+        <!-- eye -->
+        <!-- horn -->
         <!-- hair -->
-        <!-- eyes -->
-        <!-- nose -->
-        <!-- mouth -->
-        <!-- beard -->
     </svg>
 `
 
@@ -61,16 +58,12 @@ async function svgToPng(name) {
 
 
 function createImage(idx) {
+    const base = randInt(1);
+    const eye = randInt(1);
+    const horn = randInt(1);
+    const hair = randInt(1);
 
-    const bg = randInt(5);
-    const hair = randInt(7);
-    const eyes = randInt(9);
-    const nose = randInt(4); 
-    const mouth = randInt(5);
-    const beard = randInt(3);
-    // 18,900 combinations
-
-    const face = [hair, eyes, mouth, nose, beard].join('');
+    const face = [base, eye, horn, hair].join('');
 
     if (face[takenFaces]) {
         createImage();
@@ -80,31 +73,29 @@ function createImage(idx) {
         face[takenFaces] = face;
 
         const final = template
-            .replace('<!-- bg -->', getLayer(`bg${bg}`))
-            .replace('<!-- head -->', getLayer('head0'))
+            .replace('<!-- base -->', getLayer(`base${base}`))
+            .replace('<!-- eye -->', getLayer(`eye${eye}`))
+            .replace('<!-- horn -->', getLayer(`horn${horn}`))
             .replace('<!-- hair -->', getLayer(`hair${hair}`))
-            .replace('<!-- eyes -->', getLayer(`eyes${eyes}`))
-            .replace('<!-- nose -->', getLayer(`nose${nose}`))
-            .replace('<!-- mouth -->', getLayer(`mouth${mouth}`))
-            .replace('<!-- beard -->', getLayer(`beard${beard}`, 0.5))
+            // .replace('<!-- nose -->', getLayer(`nose${nose}`))
+            // .replace('<!-- mouth -->', getLayer(`mouth${mouth}`))
+            // .replace('<!-- beard -->', getLayer(`beard${beard}`, 0.5))
 
         const meta = {
             name,
             description: `A drawing of ${name.split('-').join(' ')}`,
             image: `${idx}.png`,
-            attributes: [
-                { 
-                    beard: '',
-                    rarity: 0.5
-                }
-            ]
+            // attributes: [
+            //     { 
+            //         beard: '',
+            //         rarity: 0.5
+            //     }
+            // ]
         }
         writeFileSync(`./out/${idx}.json`, JSON.stringify(meta))
         writeFileSync(`./out/${idx}.svg`, final)
         svgToPng(idx)
     }
-
-
 }
 
 
@@ -120,4 +111,4 @@ readdirSync('./out').forEach(f => rmSync(`./out/${f}`));
 do {
     createImage(idx);
     idx--;
-  } while (idx >= 0);
+} while (idx >= 0);
