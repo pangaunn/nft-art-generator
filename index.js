@@ -2,9 +2,11 @@ const { readFileSync, writeFileSync, readdirSync, rmSync, existsSync, mkdirSync 
 const sharp = require('sharp');
 
 const template = `
-    <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <!-- base -->
         <!-- eye -->
+        <!-- nose -->
+        <!-- ear -->
         <!-- horn -->
         <!-- hair -->
     </svg>
@@ -12,7 +14,7 @@ const template = `
 
 const takenNames = {};
 const takenFaces = {};
-let idx = 999;
+let idx = 20;
 
 function randInt(max) {
     return Math.floor(Math.random() * (max + 1));
@@ -47,6 +49,12 @@ function getLayer(name, skip=0.0) {
     return Math.random() > skip ? layer : '';
 }
 
+function getPngLayer(name, skip=0.0) {
+    const png = readFileSync(`./layers/${name}.png`, 'base64');
+    const layer = `<image x="0" y="0" width="256" height="256" xlink:href="data:image/png;base64,${png}" />`
+    return Math.random() > skip ? layer : '';
+}
+
 async function svgToPng(name) {
     const src = `./out/${name}.svg`;
     const dest = `./out/${name}.png`;
@@ -59,11 +67,13 @@ async function svgToPng(name) {
 
 function createImage(idx) {
     const base = randInt(1);
-    const eye = randInt(1);
+    const eye = randInt(4);
+    const nose = randInt(1);
+    const ear = randInt(1);
     const horn = randInt(1);
-    const hair = randInt(1);
+    const hair = randInt(2);
 
-    const face = [base, eye, horn, hair].join('');
+    const face = [base, eye, nose, ear, horn, hair].join('');
 
     if (face[takenFaces]) {
         createImage();
@@ -73,10 +83,12 @@ function createImage(idx) {
         face[takenFaces] = face;
 
         const final = template
-            .replace('<!-- base -->', getLayer(`base${base}`))
-            .replace('<!-- eye -->', getLayer(`eye${eye}`))
-            .replace('<!-- horn -->', getLayer(`horn${horn}`))
-            .replace('<!-- hair -->', getLayer(`hair${hair}`))
+            .replace('<!-- base -->', getPngLayer(`base_0`))
+            .replace('<!-- eye -->', getPngLayer(`eye_${eye}`))
+            .replace('<!-- nose -->', getPngLayer(`nose_0`))
+            .replace('<!-- ear -->', getPngLayer(`ear_0`))
+            .replace('<!-- horn -->', getPngLayer(`horn_0`))
+            .replace('<!-- hair -->', getPngLayer(`hair_${hair}`))
             // .replace('<!-- nose -->', getLayer(`nose${nose}`))
             // .replace('<!-- mouth -->', getLayer(`mouth${mouth}`))
             // .replace('<!-- beard -->', getLayer(`beard${beard}`, 0.5))
@@ -112,3 +124,6 @@ do {
     createImage(idx);
     idx--;
 } while (idx >= 0);
+
+// const result = getPngLayer("base_0")
+// console.log(result)
